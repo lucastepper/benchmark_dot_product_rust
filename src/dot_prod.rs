@@ -1,3 +1,4 @@
+#![feature(test)]
 pub fn dot_prod(arr1: &[f64], arr2: &[f64]) -> f64 {
     arr1.iter()
         .zip(arr2.iter())
@@ -7,8 +8,9 @@ pub fn dot_prod(arr1: &[f64], arr2: &[f64]) -> f64 {
 
 #[cfg(test)]
 mod tests {
+    extern crate test;
     use super::*;
-    const NDATA: usize = usize::pow(10, 6);
+    const NDATA: usize = usize::pow(10, 5);
 
 
     struct TestData {
@@ -28,11 +30,21 @@ mod tests {
             let dot_prod = dot_prod_func(&self.arr1, &self.arr2);
             assert!(dot_prod == self.ref_val);
         }
+        fn run_dot_prod(&self, dot_prod_func: fn (&[f64], &[f64]) -> f64) {
+            let _dot_prod = dot_prod_func(&self.arr1, &self.arr2);
+        }
     }
 
     #[test]
     fn test_dot_base() {
         let test_data = TestData::new();
         test_data.test_dot_prod(dot_prod);
+    }
+    #[bench]
+    fn bench_dot_base(b: &mut test::Bencher) {
+        let test_data = TestData::new();
+        b.iter(|| {
+            test::black_box(test_data.run_dot_prod(dot_prod));
+        });
     }
 }
