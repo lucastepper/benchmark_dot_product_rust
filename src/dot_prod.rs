@@ -1,7 +1,17 @@
 #![feature(test)]
+use rayon::prelude::*;
+
+
 pub fn dot_prod(arr1: &[f64], arr2: &[f64]) -> f64 {
     arr1.iter()
         .zip(arr2.iter())
+        .map(|(x, y)| *x * *y)
+        .sum()
+}
+
+pub fn dot_prod_parallel(arr1: &[f64], arr2: &[f64]) -> f64 {
+    arr1.par_iter()
+        .zip(arr2.par_iter())
         .map(|(x, y)| *x * *y)
         .sum()
 }
@@ -40,11 +50,23 @@ mod tests {
         let test_data = TestData::new();
         test_data.test_dot_prod(dot_prod);
     }
+    #[test]
+    fn test_dot_prod_parallel() {
+        let test_data = TestData::new();
+        test_data.test_dot_prod(dot_prod_parallel);
+    }
     #[bench]
-    fn bench_dot_base(b: &mut test::Bencher) {
+    fn bench_dot_prod(b: &mut test::Bencher) {
         let test_data = TestData::new();
         b.iter(|| {
             test::black_box(test_data.run_dot_prod(dot_prod));
+        });
+    }
+    #[bench]
+    fn bench_dot_prod_parallel(b: &mut test::Bencher) {
+        let test_data = TestData::new();
+        b.iter(|| {
+            test::black_box(test_data.run_dot_prod(dot_prod_parallel));
         });
     }
 }
