@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 rayon = "1.5"
+packed_simd = { version = "0.3.7", package = "packed_simd_2" }
 
 [lib]
 name = "dot_prod"           # The name of the target.
